@@ -8,7 +8,7 @@
 	<display-name>vodacom random number</display-name>
 
 	<servlet>
-		<servlet-name>random-number</servlet-name>
+		<servlet-name>random-numbers</servlet-name>
 		<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
 		<init-param>
 			<param-name>jersey.config.server.provider.packages</param-name>
@@ -24,7 +24,7 @@
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>random-number</servlet-name>
+		<servlet-name>random-numbers</servlet-name>
 		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
 

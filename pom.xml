@@ -6,7 +6,7 @@
 	<artifactId>random-numbers</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<name>vodacom random number</name>
+	<name>random-numbers</name>
 
 	<properties>
 		<junit-version>4.12</junit-version>
@@ -16,14 +16,14 @@
 
 
 	<dependencies>
-
+		<!-- All java EE specifications API's -->
 		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-api</artifactId>
 			<version>8.0</version>
 			<scope>provided</scope>
 		</dependency>
-
+		<!-- CDI -->
 		<dependency>
 			<groupId>javax.enterprise</groupId>
 			<artifactId>cdi-api</artifactId>
@@ -41,6 +41,12 @@
 			<version>${jersey.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.glassfish.jersey.inject</groupId>
+			<artifactId>jersey-hk2</artifactId>
+			<version>2.28</version>
+		</dependency>
+
 		<!-- servlet 4.0 -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -55,41 +61,78 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.wildfly</groupId>
+			<artifactId>wildfly-ejb-client-bom</artifactId>
+			<version>19.1.0.Final</version>
+			<type>pom</type>
+		</dependency>
+
+
 	</dependencies>
-	<build>
-		<finalName>random-numbers</finalName>
-		<plugins>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.6.2</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-					<failOnMissingWebXml>true</failOnMissingWebXml>
-					<webXml>src/main/webapp/WEB-INF/web.xml</webXml>
-				</configuration>
-			</plugin>
-			<!-- plugin to add local war -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-install-plugin</artifactId>
-				<version>3.0.0-M1</version>
-				<configuration>
-					<groupId>mz.co.vm</groupId>
-					<artifactId>random-numbers</artifactId>
-					<version>1.0.0-SNAPSHOT</version>
-					<packaging>war</packaging>
-					<file>${basedir}/src/main/resources/random-number.war</file>
-					<generatePom>true</generatePom>
-				</configuration>
-				<executions>
-
-				</executions>
-			</plugin>
-
-		</plugins>
-	</build>
-
+	<profiles>
+		<profile>
+			<id>wildfly-standalone</id>
+			<build>
+				<finalName>random-numbers</finalName>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.cargo</groupId>
+						<artifactId>cargo-maven2-plugin</artifactId>
+						<version>${cargo-maven2-plugin.version</version>
+						<configuration>
+							<container>
+								<containerId>wildfly19x</containerId>
+								<zipUrlInstaller>
+									<url>
+										http://download.jboss.org/
+										wildfly/19.1.0.Final/
+										wildfly-19.1.0.Final.zip
+									</url>
+								</zipUrlInstaller>
+							</container>
+							<configuration>
+								<properties>
+									<cargo.hostname>127.0.0.0</cargo.hostname>
+									<cargo.jboss.management-http.port>
+										9990
+									</cargo.jboss.management-http.port>
+									<cargo.servlet.users>
+										admin:vodacom123
+									</cargo.servlet.users>
+								</properties>
+							</configuration>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.8.0</version>
+						<configuration>
+							<source>1.8</source>
+							<target>1.8</target>
+							<failOnMissingWebXml>true</failOnMissingWebXml>
+							<webXml>src/main/webapp/WEB-INF/web.xml</webXml>
+						</configuration>
+					</plugin>
+					<!-- plugin to add local war -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-install-plugin</artifactId>
+						<version>3.0.0-M1</version>
+						<configuration>
+							<groupId>mz.co.vm</groupId>
+							<artifactId>random-numbers</artifactId>
+							<version>1.0.0-SNAPSHOT</version>
+							<packaging>war</packaging>
+							<file>${basedir}/src/main/resources/random-number.war</file>
+							<generatePom>true</generatePom>
+						</configuration>
+						
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

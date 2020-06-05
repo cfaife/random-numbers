@@ -10,12 +10,17 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Stream;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 
-import Repository.RandomNumberRepository;
 import mz.co.vm.randomnumber.entity.EstatisticEntity;
 import mz.co.vm.randomnumber.entity.PendingEntity;
 import mz.co.vm.randomnumber.entity.RandomNumberEntity;
+import mz.co.vm.randomnumber.repository.RandomNumberRepository;
 
 /**
  * 
@@ -23,10 +28,21 @@ import mz.co.vm.randomnumber.entity.RandomNumberEntity;
  *
  */
 
-@Stateless
+@Stateless(name="randomService")
 public class RandomServiceImpl implements RandomService {
 	
-	private ExecutorService executorService = Executors.newSingleThreadExecutor();
+	private ExecutorService executorService; 
+	
+	@Resource
+    private SessionContext context;
+	
+	@EJB
+	private RandomNumberRepository numberRepository;
+
+	@PostConstruct
+	public void init() {
+		executorService= Executors.newSingleThreadExecutor();
+	}
 
 
 	@Override
@@ -37,7 +53,7 @@ public class RandomServiceImpl implements RandomService {
 		
 		InnerTread innerTread =new InnerTread(randomNumber);
 		long startTime = System.currentTimeMillis()*1000;
-
+		randomNumber.setTimeCreated(LocalTime.now());
 		executorService.execute(innerTread);
 		
 		long endTime = System.currentTimeMillis()*1000;
@@ -49,21 +65,22 @@ public class RandomServiceImpl implements RandomService {
 					
 					executorService.shutdownNow();
 					randomNumber.setGenerated(false);
+					randomNumber.setNumber(null);
 			}
 		}
-		
+		this.numberRepository.save(randomNumber);
 		
 		return randomNumber;
 	}
 	
 	@Override
 	public List<RandomNumberEntity> getHistory() {
-		return RandomNumberRepository.getHistory();
+		return numberRepository.getHistory();
 	}
 
 	@Override
 	public EstatisticEntity getStats() {
-		List<RandomNumberEntity> randomNumbers =RandomNumberRepository.findAll();
+		List<RandomNumberEntity> randomNumbers =numberRepository.findAll();
 		
 		Stream<RandomNumberEntity> minStream= randomNumbers.stream();
 		Optional<Long> min = minStream
@@ -96,7 +113,7 @@ public class RandomServiceImpl implements RandomService {
 		
 		
 		List<PendingEntity> pendings = new  ArrayList<>();
-		for(RandomNumberEntity rn: RandomNumberRepository.findAllPendings()) {
+		for(RandomNumberEntity rn: numberRepository.findAllPendings()) {
 			LocalTime  time = LocalTime.now();
 			PendingEntity pending = new PendingEntity(
 					rn.getRequestID(), 

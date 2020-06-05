@@ -7,10 +7,13 @@ package mz.co.vm.randomnumber.service;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
+import javax.ejb.Remote;
+
 import mz.co.vm.randomnumber.entity.EstatisticEntity;
 import mz.co.vm.randomnumber.entity.PendingEntity;
 import mz.co.vm.randomnumber.entity.RandomNumberEntity;
 
+@Remote
 public interface RandomService {
 	
 	RandomNumberEntity generateNewNumber(Long xMaxWait);

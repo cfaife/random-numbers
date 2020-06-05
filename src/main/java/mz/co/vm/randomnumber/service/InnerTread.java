@@ -4,7 +4,11 @@ import java.util.Random;
 import java.util.UUID;
 
 import mz.co.vm.randomnumber.entity.RandomNumberEntity;
-
+/**
+ * 
+ * @author Clerio Alfredo Faife
+ *
+ */
 public class InnerTread implements Runnable{
 	
 	private RandomNumberEntity  randomNumber;
@@ -16,8 +20,8 @@ public class InnerTread implements Runnable{
 	@Override
 	public void run() {
 	
-		Random r  = new Random();
-		this.randomNumber.setNumber(r.nextInt());
+		Random random  = new Random();
+		this.randomNumber.setNumber(random.nextInt(900) + 3);
 		this.randomNumber.setRequestID(UUID.randomUUID());		
 	}
 	
