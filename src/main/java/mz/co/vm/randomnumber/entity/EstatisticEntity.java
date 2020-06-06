@@ -18,7 +18,7 @@ public final class EstatisticEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public EstatisticEntity(Long maximumWaitingTime, Long minimumWaitingTime, Integer totalPendingRequests) {
-		super();
+		 
 		this.maximumWaitingTime = maximumWaitingTime;
 		this.minimumWaitingTime = minimumWaitingTime;
 		this.totalPendingRequests = totalPendingRequests;
@@ -31,15 +31,15 @@ public final class EstatisticEntity implements Serializable {
 	private Integer totalPendingRequests;
 
 	public Long getMaximumWaitingTime() {
-		return maximumWaitingTime;
+		return this.maximumWaitingTime;
 	}
 
 	public Long getMinimumWaitingTime() {
-		return minimumWaitingTime;
+		return this.minimumWaitingTime;
 	}
 
 	public Integer getTotalPendingRequests() {
-		return totalPendingRequests;
+		return this.totalPendingRequests;
 	}
 	
 	

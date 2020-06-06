@@ -1,7 +1,10 @@
 package mz.co.vm.randomnumber.controller;
 
 import java.util.List;
-
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeoutException;
 
 import javax.ejb.EJB;
 import javax.ws.rs.GET;
@@ -29,13 +32,15 @@ public class RandomNumberController {
 
 	@EJB
 	private RandomService randomService;
+	
+	
 
 	@POST
 	@Path("/random")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response requestNewRandomNumber(@HeaderParam("X-Max-Wait") Long xMaxWait) {
+	public Response requestNewRandomNumber(@HeaderParam("X-Max-Wait") Long xMaxWait) throws InterruptedException, ExecutionException, TimeoutException {
 
-		RandomNumberEntity rne = randomService.generateNewNumber(xMaxWait);
+		RandomNumberEntity rne = randomService.generateNewRandomNumber(xMaxWait);
 		Response.ResponseBuilder rp = Response.ok(rne);
 		Response response = rp.header("x-request-duration", rne.getTimeSecs()).build();
 

@@ -12,6 +12,9 @@
 		<junit-version>4.12</junit-version>
 		<jersey.version>2.29.1</jersey.version>
 		<servlet-version>4.0.0</servlet-version>
+		<cargo-maven2-plugin.version>1.7.13</cargo-maven2-plugin.version>
+
+
 	</properties>
 
 
@@ -71,68 +74,45 @@
 
 	</dependencies>
 
-	<profiles>
-		<profile>
-			<id>wildfly-standalone</id>
-			<build>
-				<finalName>random-numbers</finalName>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.cargo</groupId>
-						<artifactId>cargo-maven2-plugin</artifactId>
-						<version>${cargo-maven2-plugin.version</version>
-						<configuration>
-							<container>
-								<containerId>wildfly19x</containerId>
-								<zipUrlInstaller>
-									<url>
-										http://download.jboss.org/
-										wildfly/19.1.0.Final/
-										wildfly-19.1.0.Final.zip
-									</url>
-								</zipUrlInstaller>
-							</container>
-							<configuration>
-								<properties>
-									<cargo.hostname>127.0.0.0</cargo.hostname>
-									<cargo.jboss.management-http.port>
-										9990
-									</cargo.jboss.management-http.port>
-									<cargo.servlet.users>
-										admin:vodacom123
-									</cargo.servlet.users>
-								</properties>
-							</configuration>
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<version>3.8.0</version>
-						<configuration>
-							<source>1.8</source>
-							<target>1.8</target>
-							<failOnMissingWebXml>true</failOnMissingWebXml>
-							<webXml>src/main/webapp/WEB-INF/web.xml</webXml>
-						</configuration>
-					</plugin>
-					<!-- plugin to add local war -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-install-plugin</artifactId>
-						<version>3.0.0-M1</version>
-						<configuration>
-							<groupId>mz.co.vm</groupId>
-							<artifactId>random-numbers</artifactId>
-							<version>1.0.0-SNAPSHOT</version>
-							<packaging>war</packaging>
-							<file>${basedir}/src/main/resources/random-number.war</file>
-							<generatePom>true</generatePom>
-						</configuration>
-						
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+
+	<build>
+		<finalName>random-numbers</finalName>
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.0</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+					<failOnMissingWebXml>true</failOnMissingWebXml>
+					<webXml>src/main/webapp/WEB-INF/web.xml</webXml>
+				</configuration>
+			</plugin>
+			<!-- plugin to add local war -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<version>3.0.0-M1</version>
+				<configuration>
+					<groupId>mz.co.vm</groupId>
+					<artifactId>random-numbers</artifactId>
+					<version>1.0.0-SNAPSHOT</version>
+					<packaging>war</packaging>
+					<file>${basedir}/src/main/resources/random-number.war</file>
+					<generatePom>true</generatePom>
+				</configuration>
+
+			</plugin>
+			<plugin>
+				<artifactId>maven-ejb-plugin</artifactId>
+				<version>3.0.1</version>
+				<configuration>
+					<ejbVersion>3.2</ejbVersion>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
 </project>

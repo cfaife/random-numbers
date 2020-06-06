@@ -2,25 +2,35 @@ package mz.co.vm.randomnumber.service;
 
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAmount;
+ 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+import java.util.concurrent.TimeoutException;
+ 
 import java.util.stream.Stream;
 
-import javax.annotation.PostConstruct;
+ 
 import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
+
+ 
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+ 
 
 import mz.co.vm.randomnumber.entity.EstatisticEntity;
 import mz.co.vm.randomnumber.entity.PendingEntity;
 import mz.co.vm.randomnumber.entity.RandomNumberEntity;
-import mz.co.vm.randomnumber.repository.RandomNumberRepository;
+ 
+import mz.co.vm.randomnumber.util.RandomNumberFactory;
 
 /**
  * 
@@ -31,110 +41,141 @@ import mz.co.vm.randomnumber.repository.RandomNumberRepository;
 @Stateless(name="randomService")
 public class RandomServiceImpl implements RandomService {
 	
-	private ExecutorService executorService; 
+	 
+	private List<RandomNumberEntity> tasks = new ArrayList<RandomNumberEntity>(); 
 	
+	private ExecutorService executor =  Executors.newScheduledThreadPool(1);
+
 	@Resource
     private SessionContext context;
 	
-	@EJB
-	private RandomNumberRepository numberRepository;
-
-	@PostConstruct
-	public void init() {
-		executorService= Executors.newSingleThreadExecutor();
-	}
+ 
+//	@PostConstruct
+//	public void init() {
+//		executorService= Executors.newSingleThreadExecutor();
+//	}
 
 
 	@Override
-	public RandomNumberEntity generateNewNumber(Long xMaxWait) {
+	public RandomNumberEntity generateNewRandomNumber(Long xMaxWait) throws InterruptedException, ExecutionException, TimeoutException {
 		
-		RandomNumberEntity randomNumber = new RandomNumberEntity();
-		randomNumber.setTimeCreated(LocalTime.now());
 		
-		InnerTread innerTread =new InnerTread(randomNumber);
-		long startTime = System.currentTimeMillis()*1000;
-		randomNumber.setTimeCreated(LocalTime.now());
-		executorService.execute(innerTread);
+		Callable<RandomNumberEntity> callable =  this.createThread(xMaxWait);
 		
-		long endTime = System.currentTimeMillis()*1000;
+		Future<RandomNumberEntity> future =   executor.submit(callable);
+		 
+		LocalTime endTime = LocalTime.now();
 		
-		long duration = endTime-startTime;
 		
+		long duration = endTime.toSecondOfDay() - future.get().getTimeCreated().toSecondOfDay();
+
 		if(xMaxWait!=null ) {
-				if( !(executorService.isTerminated()) && duration>=xMaxWait) {
+				if( !(future.isDone()) 
+						&& duration>=xMaxWait 
+						&& xMaxWait>31) {
 					
-					executorService.shutdownNow();
+					RandomNumberEntity randomNumber = future.get();
+					
 					randomNumber.setGenerated(false);
 					randomNumber.setNumber(null);
+					
+					tasks.add(randomNumber);
+					return randomNumber;
 			}
 		}
-		this.numberRepository.save(randomNumber);
+		tasks.add(future.get());
+		return future.get();
 		
-		return randomNumber;
 	}
 	
 	@Override
 	public List<RandomNumberEntity> getHistory() {
-		return numberRepository.getHistory();
+		return this.tasks;
 	}
+	
+	@Override
+	public void cancelRandomRequest(UUID uuid) {
+		 if(uuid ==null) {
+			 throw new IllegalArgumentException("uuid parameter can not be  nuul");
+		 }
+		 this.executor.shutdownNow();
+	}
+
 
 	@Override
 	public EstatisticEntity getStats() {
-		List<RandomNumberEntity> randomNumbers =numberRepository.findAll();
-		
-		Stream<RandomNumberEntity> minStream= randomNumbers.stream();
+ 		if(tasks.size()==1) {
+ 			return new EstatisticEntity(tasks.get(0).getTimeSecs(), tasks.get(0).getTimeSecs(), 1);
+ 		}
+		Stream<RandomNumberEntity> minStream= tasks.stream();
 		Optional<Long> min = minStream
 					.map(x -> x.getTimeSecs())
 					.min((x,y)->x.intValue()-y.intValue());
 		
-		Stream<RandomNumberEntity> maxStream = randomNumbers.stream();
+		Stream<RandomNumberEntity> maxStream = tasks.stream();
 		Optional<Long> max = maxStream
 					.map(x -> x.getTimeSecs())
 					.min((x,y)->x.intValue()-y.intValue());
 
-		Stream<RandomNumberEntity> totalStream = randomNumbers.stream();
+		Stream<RandomNumberEntity> totalStream = tasks.stream();
 		Long totalPending  = totalStream
 					.filter(x ->!x.isGenerated()).count();
+				
 		
 		return new EstatisticEntity(max.get(), min.get(), totalPending.intValue());
 		
 	}
 
-	@Override
-	public void cancelRandomRequest(String UUID, ExecutorService executorService) {
-		if(!executorService.isTerminated()){
-			
-			executorService.shutdown();
-		}		
-	}
 
 	@Override
 	public List<PendingEntity> getPendingRequest() {
 		
-		
 		List<PendingEntity> pendings = new  ArrayList<>();
-		for(RandomNumberEntity rn: numberRepository.findAllPendings()) {
-			LocalTime  time = LocalTime.now();
+		LocalTime  time = LocalTime.now();
+		tasks.stream().filter(x->!x.isGenerated()).forEach(x->{
 			PendingEntity pending = new PendingEntity(
-					rn.getRequestID(), 
-					rn.getTimeCreated(), 
-					ChronoUnit.SECONDS.between(time, rn.getTimeCreated())
+					x.getRequestID(), 
+					x.getTimeCreated(), 
+					ChronoUnit.SECONDS.between(time, x.getTimeCreated())
 					);
-					
 			pendings.add(pending);
-		}
+		});
+		
+		 
 		return pendings;
 	}
 
 	@Override
-	public void setThreadPoolSize(int size, ExecutorService executorService) {
+	public void changePoolThreadSize(int size) {
 		if(size<1 || size>10) {
 			throw new IllegalArgumentException("Maximum supported value should be 10 and minimum value should be 1 the the thread Pool size");
 		}
+		executor =  Executors.newScheduledThreadPool(size);
 	}
 
+	private Callable<RandomNumberEntity> createThread(Long xMaxWait){
+		Callable<RandomNumberEntity> callable = () ->{
+			RandomNumberEntity randomNumberEntity = new RandomNumberEntity();
+			randomNumberEntity.setTimeCreated(LocalTime.now());
+			randomNumberEntity.setRequestID(UUID.randomUUID());
+			
+			 	if(xMaxWait == null) {
+					Thread.sleep(30000);
+				}else {
+					Thread.sleep(xMaxWait);
+				}
+			 
+			
+			randomNumberEntity.setNumber(RandomNumberFactory.get());
+			randomNumberEntity.setTimeSecs(Long.valueOf(LocalTime.now().toSecondOfDay()));
+			return randomNumberEntity;
+		};
+		return callable;
+	}
 	
-	
+	public  ExecutorService getExecutorService() {
+		return this.executor;
+	}
 	
 
 }
