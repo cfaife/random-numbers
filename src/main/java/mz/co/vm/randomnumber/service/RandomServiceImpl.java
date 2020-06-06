@@ -24,8 +24,8 @@ import javax.annotation.Resource;
  
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
- 
 
+import mz.co.vm.randomnumber.annotations.DelayMe;
 import mz.co.vm.randomnumber.entity.EstatisticEntity;
 import mz.co.vm.randomnumber.entity.PendingEntity;
 import mz.co.vm.randomnumber.entity.RandomNumberEntity;
@@ -55,7 +55,7 @@ public class RandomServiceImpl implements RandomService {
 //		executorService= Executors.newSingleThreadExecutor();
 //	}
 
-
+	
 	@Override
 	public RandomNumberEntity generateNewRandomNumber(Long xMaxWait) throws InterruptedException, ExecutionException, TimeoutException {
 		

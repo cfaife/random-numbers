@@ -1,4 +1,4 @@
-package mz.co.vm.randomnumber.service.unit;
+package mz.co.vm.randomnumber.unit;
 
 import static org.junit.Assert.*;
 
@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import mz.co.vm.randomnumber.util.RandomNumberFactory;
 
-public class RandomTest {
+public class RandomNumberFactoryTest {
 	
 	@Test
 	public  void testRandom_shouldBeHigherThen3() {

@@ -1,4 +1,4 @@
-package mz.co.vm.randomnumber.service.unit;
+package mz.co.vm.randomnumber.service;
 
 import static org.junit.Assert.*;
 
