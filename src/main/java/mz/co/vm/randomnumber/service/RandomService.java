@@ -7,7 +7,6 @@ package mz.co.vm.randomnumber.service;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeoutException;
 
@@ -16,7 +15,11 @@ import javax.ejb.Remote;
 import mz.co.vm.randomnumber.entity.EstatisticEntity;
 import mz.co.vm.randomnumber.entity.PendingEntity;
 import mz.co.vm.randomnumber.entity.RandomNumberEntity;
-
+/**
+ * 
+ * @author cfaife
+ *
+ */
 @Remote
 public interface RandomService {
 	

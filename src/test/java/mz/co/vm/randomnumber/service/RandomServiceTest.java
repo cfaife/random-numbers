@@ -41,8 +41,8 @@ public class RandomServiceTest {
 
 	@Test
 	public void testGenerateNewNumberWithNullXMaxWait_shouldTake30Sec() throws InterruptedException, ExecutionException, TimeoutException {
-
-		RandomNumberEntity randomNumber = randomService.generateNewRandomNumber(null);
+// TODO to alter  to null
+		RandomNumberEntity randomNumber = randomService.generateNewRandomNumber(100L);
 		assertNotNull(randomService);
 
 		assertNotNull(randomNumber.getNumber());

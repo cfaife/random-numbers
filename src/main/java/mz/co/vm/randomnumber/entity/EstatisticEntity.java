@@ -2,16 +2,11 @@ package mz.co.vm.randomnumber.entity;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
 /**
  * 
  * @author Clerio Alfredo Faife
  *
  */
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
 public final class EstatisticEntity implements Serializable {
 	
  
@@ -42,9 +37,4 @@ public final class EstatisticEntity implements Serializable {
 		return this.totalPendingRequests;
 	}
 	
-	
-	
-	
-
-
 }

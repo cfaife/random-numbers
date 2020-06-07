@@ -20,12 +20,10 @@ import java.util.stream.Stream;
 
  
 import javax.annotation.Resource;
-
- 
+import javax.ejb.Local;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 
-import mz.co.vm.randomnumber.annotations.DelayMe;
 import mz.co.vm.randomnumber.entity.EstatisticEntity;
 import mz.co.vm.randomnumber.entity.PendingEntity;
 import mz.co.vm.randomnumber.entity.RandomNumberEntity;
@@ -33,11 +31,11 @@ import mz.co.vm.randomnumber.entity.RandomNumberEntity;
 import mz.co.vm.randomnumber.util.RandomNumberFactory;
 
 /**
+ * Implements all the logic for the  <{@link RandomService}>
  * 
  * @author Clerio Alfredo Faife
  *
  */
-
 @Stateless(name="randomService")
 public class RandomServiceImpl implements RandomService {
 	
@@ -46,15 +44,7 @@ public class RandomServiceImpl implements RandomService {
 	
 	private ExecutorService executor =  Executors.newScheduledThreadPool(1);
 
-	@Resource
-    private SessionContext context;
-	
- 
-//	@PostConstruct
-//	public void init() {
-//		executorService= Executors.newSingleThreadExecutor();
-//	}
-
+	 
 	
 	@Override
 	public RandomNumberEntity generateNewRandomNumber(Long xMaxWait) throws InterruptedException, ExecutionException, TimeoutException {

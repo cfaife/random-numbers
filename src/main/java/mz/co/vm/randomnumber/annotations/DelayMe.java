@@ -9,6 +9,10 @@ import java.lang.annotation.Target;
 import javax.inject.Qualifier;
 
 /**
+ * This annotation  causes any method that is annotated with it to be delayed by 20 seconds by default. 
+ * The annotation receives an optional parameter to define the delay time, eg.: @DelayMe(time=3000).
+ * 
+ * 
  * 
  * @author Clerio Alfredo Faife
  *
