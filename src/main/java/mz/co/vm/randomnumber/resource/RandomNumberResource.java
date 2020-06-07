@@ -88,7 +88,9 @@ public class RandomNumberResource {
 	@Path("/threads/{size}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response changeThreadPoolSize(@PathParam("username") Integer size) {
-		Response.ResponseBuilder rp = Response.ok();
+		randomService.changePoolThreadSize(size);
+		Response.ResponseBuilder rp = Response.ok("Tread Pool size changed to "+size);
+		
 		Response response = rp.build();
 
 		return response;
