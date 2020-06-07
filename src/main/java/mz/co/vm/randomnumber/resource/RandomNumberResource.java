@@ -80,7 +80,7 @@ public class RandomNumberResource {
 		EstatisticEntity stat = this.randomService.getStats();
 		
 		if(stat==null) {
-			Response.noContent().build();
+			return Response.noContent().build();
 		}
 		
 		return Response.ok(stat).build();
