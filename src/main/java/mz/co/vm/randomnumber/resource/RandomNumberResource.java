@@ -1,6 +1,7 @@
 package mz.co.vm.randomnumber.resource;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import java.util.concurrent.TimeoutException;
@@ -41,7 +42,7 @@ public class RandomNumberResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response requestNewRandomNumber(@HeaderParam("X-Max-Wait") Long xMaxWait) throws InterruptedException, ExecutionException, TimeoutException {
 
-		RandomNumberEntity rne = randomService.generateNewRandomNumber(xMaxWait);
+		RandomNumberEntity rne = this.randomService.generateNewRandomNumber(xMaxWait);
 		Response.ResponseBuilder rp = Response.ok(rne);
 		Response response = rp.header("x-request-duration", rne.getTimeSecs()).build();
 
@@ -56,12 +57,18 @@ public class RandomNumberResource {
 	}
 
 	@PUT
-	@Path("/<requestId>/cancel")
+	@Path("/cancel/{requestId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response cancelRandomRequest() {
-		Response.ResponseBuilder rp = Response.ok();
+	public Response cancelRandomRequest(@PathParam(value = "requestId") String requestId) {
+		
+		UUID uuid  = UUID.fromString(requestId);
+		boolean canceled = this.randomService.cancelRandomRequest(uuid);
+		
+		Response.ResponseBuilder rp = 
+				Response
+					.ok(canceled?"request "+uuid+ "canceled ":"request "+uuid+ "not canceled ");
 		Response response = rp.build();
-
+		
 		return response;
 	}
 
@@ -82,7 +89,7 @@ public class RandomNumberResource {
 	@PUT
 	@Path("/threads/{size}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response changeThreadPoolSize(@PathParam("username") Integer size) {
+	public Response changeThreadPoolSize(@PathParam("size") Integer size) {
 		randomService.changePoolThreadSize(size);
 		Response.ResponseBuilder rp = Response.ok("Tread Pool size changed to "+size);
 		

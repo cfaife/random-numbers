@@ -24,7 +24,7 @@ Startup  the server using the  below command:
 		
 #Exploring some available resources:
 	
-Requests a new Random number:
+Requests a new Random number, when it completes the http response header has a key `x-request-duration` with the value  of the  process duration: 
 
 		POST http://localhost:8080/random-numbers/api/v1/random
 		
@@ -34,7 +34,7 @@ List of Generated Random Numbers:
 
 Cancels a Random Number Request that is pending:
 
-		http://localhost:8080/random-numbers/api/v1/<requestId>/cancel
+		http://localhost:8080/random-numbers/api/v1/cancel/<requestId>
 
 Get system usage statistics:
 

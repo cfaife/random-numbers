@@ -81,11 +81,12 @@ public class RandomServiceImpl implements RandomService {
 	}
 	
 	@Override
-	public void cancelRandomRequest(UUID uuid) {
+	public boolean cancelRandomRequest(UUID uuid) {
 		 if(uuid ==null) {
 			 throw new IllegalArgumentException("uuid parameter can not be  nuul");
 		 }
 		 this.executor.shutdownNow();
+		 return  true;
 	}
 
 
@@ -143,6 +144,8 @@ public class RandomServiceImpl implements RandomService {
 	private Callable<RandomNumberEntity> createThread(Long xMaxWait){
 		Callable<RandomNumberEntity> callable = () ->{
 			RandomNumberEntity randomNumberEntity = new RandomNumberEntity();
+			
+			int  start = LocalTime.now().toSecondOfDay();
 			randomNumberEntity.setTimeCreated(LocalTime.now());
 			randomNumberEntity.setRequestID(UUID.randomUUID());
 			
@@ -154,7 +157,8 @@ public class RandomServiceImpl implements RandomService {
 			 
 			
 			randomNumberEntity.setNumber(RandomNumberFactory.get());
-			randomNumberEntity.setTimeSecs(Long.valueOf(LocalTime.now().toSecondOfDay()));
+			int  end = LocalTime.now().toSecondOfDay();
+			randomNumberEntity.setTimeSecs(Long.valueOf(end-start));
 			return randomNumberEntity;
 		};
 		return callable;

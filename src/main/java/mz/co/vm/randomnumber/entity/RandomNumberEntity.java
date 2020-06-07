@@ -63,6 +63,4 @@ public class RandomNumberEntity  implements Serializable{
 		this.timeCreated = timeCreated;
 	}
 	
-	
-
 }

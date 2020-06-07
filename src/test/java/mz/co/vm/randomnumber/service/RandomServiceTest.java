@@ -16,7 +16,6 @@ import org.junit.Test;
  
 
 import mz.co.vm.randomnumber.entity.EstatisticEntity;
-import mz.co.vm.randomnumber.entity.PendingEntity;
 import mz.co.vm.randomnumber.entity.RandomNumberEntity;
 
 /**
@@ -36,8 +35,8 @@ public class RandomServiceTest {
 
 	@Test
 	public void testGenerateNewNumberWithNullXMaxWait_shouldTake30Sec() throws InterruptedException, ExecutionException, TimeoutException {
-// TODO to alter  to null
-		RandomNumberEntity randomNumber = randomService.generateNewRandomNumber(100L);
+
+		RandomNumberEntity randomNumber = randomService.generateNewRandomNumber(null);
 		assertNotNull(randomService);
 
 		assertNotNull(randomNumber.getNumber());
@@ -85,18 +84,5 @@ public class RandomServiceTest {
 		assertNotNull(estatisticEntity.getTotalPendingRequests());
 
 	}
-	@Test
-	public void testGetPendingRequest_shouldPass() throws InterruptedException, ExecutionException, TimeoutException {
-		this.randomService.generateNewRandomNumber(1200L);
-		this.randomService.generateNewRandomNumber(1200L);
-
-		
-		List<PendingEntity> pendingEntities = this.randomService.getPendingRequest();
-		assertNotNull(pendingEntities);
-		 
-		assertEquals(2, pendingEntities.size());
-	}
 	
-	 
-
 }

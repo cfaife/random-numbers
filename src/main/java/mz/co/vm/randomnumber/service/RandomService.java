@@ -27,7 +27,7 @@ public interface RandomService {
 	
 	List<RandomNumberEntity> getHistory();
 	
-	void cancelRandomRequest(UUID uuid);
+	boolean cancelRandomRequest(UUID uuid);
 	
 	EstatisticEntity getStats();
 	
