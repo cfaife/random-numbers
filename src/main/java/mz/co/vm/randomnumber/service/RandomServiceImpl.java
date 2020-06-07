@@ -18,10 +18,6 @@ import java.util.concurrent.TimeoutException;
  
 import java.util.stream.Stream;
 
- 
-import javax.annotation.Resource;
-import javax.ejb.Local;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 
 import mz.co.vm.randomnumber.entity.EstatisticEntity;
@@ -49,13 +45,11 @@ public class RandomServiceImpl implements RandomService {
 	@Override
 	public RandomNumberEntity generateNewRandomNumber(Long xMaxWait) throws InterruptedException, ExecutionException, TimeoutException {
 		
-		
 		Callable<RandomNumberEntity> callable =  this.createThread(xMaxWait);
 		
 		Future<RandomNumberEntity> future =   executor.submit(callable);
 		 
 		LocalTime endTime = LocalTime.now();
-		
 		
 		long duration = endTime.toSecondOfDay() - future.get().getTimeCreated().toSecondOfDay();
 
@@ -73,8 +67,11 @@ public class RandomServiceImpl implements RandomService {
 					return randomNumber;
 			}
 		}
-		tasks.add(future.get());
-		return future.get();
+		
+		RandomNumberEntity rne = future.get();
+		rne.setGenerated(true);
+		tasks.add(rne);
+		return rne;
 		
 	}
 	

@@ -3,26 +3,21 @@ package mz.co.vm.randomnumber.service;
 import static org.junit.Assert.*;
 
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
+
 import java.util.concurrent.TimeoutException;
 
-import javax.ejb.EJB;
-import javax.naming.Context;
-import javax.naming.InitialContext;
+
 import javax.naming.NamingException;
 
 import org.junit.Before;
-import org.junit.Ignore;
+
 import org.junit.Test;
-import org.junit.runner.RunWith;
+ 
 
 import mz.co.vm.randomnumber.entity.EstatisticEntity;
 import mz.co.vm.randomnumber.entity.PendingEntity;
 import mz.co.vm.randomnumber.entity.RandomNumberEntity;
-import mz.co.vm.randomnumber.service.RandomService;
-import mz.co.vm.randomnumber.service.RandomServiceImpl;
 
 /**
  * This class  only tests the  logic   of {@link RandomService}  
