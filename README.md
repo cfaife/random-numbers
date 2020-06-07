@@ -1,35 +1,37 @@
 
 # Vodacom Random Number's Generator API
-The system was developed using `Java Concurrency API` and `Jakarta EE 8` such as `JAX-RS`, `EJB` and `CDI` technologies.
+
+The system was developed using `Java Concurrency API` and `Jakarta EE 8` with `JAX-RS`, `EJB` and `CDI` technologies.
   
 # Preparing the application server 
-Download   a wildfly-19  application server at: `https://wildfly.org/downloads/`unzip  and install  in your preferred folder, for example `/opt/`,  then run the script at `<wildfly-home-folder>/bin/add-user.sh` in order to create a user
+
+Download wildfly-19  application server at: `https://wildfly.org/downloads/`unzip  and install  in your preferred folder, for example `/opt/`,  then run the script at `<wildfly-home-folder>/bin/add-user.sh` in order to create a user.
 	
-* The user should be  
+* The user should be:
 		
 		username: vodauser
 		password: vodacom1
 
-#  Building the code and deploying manually
+# Building the code and deploying manually
 Using `maven` type in the terminal below commands:
 	
 		mvn clean install
 	
-* 1. After build and compile the code, deploy the package war file to `wildfly` deployment's folder running:  	
+* 1. After build and compile the code, deploy the package war file to `wildfly` deployment's folder running the following command:  	
 		
 		cp random-numbers/target/random-numbers.war <wildfly-folder>/standalone/deployments/
 		
-* 2. Startup  the server using the  below command:		
+* 2. Startup  the server using the below command:		
 		
 		<wildfly-folder>/bin/standalone.sh
 		
 # Deploying via `Docker`
 
-Here it is used image from jboss/wildfly  where it is going to be package.
+Here it is being used image from jboss/wildfly, where it is wrapped.
 		
 # Exploring some available resources:
 	
-Requests a new Random number, when it completes the http response header has a key `x-request-duration` with the value  of the  process duration: 
+Requests a new Random number, when it completes the `http response header` has a key `x-request-duration` with the value  of the  process duration: 
 
 		POST http://localhost:8080/random-numbers/api/v1/random
 		
