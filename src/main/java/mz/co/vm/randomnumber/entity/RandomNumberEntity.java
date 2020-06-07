@@ -63,4 +63,23 @@ public class RandomNumberEntity  implements Serializable{
 		this.timeCreated = timeCreated;
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj!=null) {
+			if(obj instanceof RandomNumberEntity) {
+				RandomNumberEntity rne = (RandomNumberEntity) obj;
+				if(rne.requestID.equals(this.requestID)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	@Override
+		public int hashCode() {
+			 
+			return timeCreated.toSecondOfDay();
+		}
+	
 }

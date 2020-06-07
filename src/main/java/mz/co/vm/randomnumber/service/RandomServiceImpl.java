@@ -3,9 +3,10 @@ package mz.co.vm.randomnumber.service;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
  
-import java.util.ArrayList;
-import java.util.List;
+ 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import java.util.concurrent.Callable;
@@ -36,7 +37,7 @@ import mz.co.vm.randomnumber.util.RandomNumberFactory;
 public class RandomServiceImpl implements RandomService {
 	
 	 
-	private List<RandomNumberEntity> tasks = new ArrayList<RandomNumberEntity>(); 
+	private Set<RandomNumberEntity> tasks = new HashSet<>(); 
 	
 	private ExecutorService executor =  Executors.newScheduledThreadPool(1);
 
@@ -76,7 +77,7 @@ public class RandomServiceImpl implements RandomService {
 	}
 	
 	@Override
-	public List<RandomNumberEntity> getHistory() {
+	public Set<RandomNumberEntity> getHistory() {
 		return this.tasks;
 	}
 	
@@ -85,15 +86,30 @@ public class RandomServiceImpl implements RandomService {
 		 if(uuid ==null) {
 			 throw new IllegalArgumentException("uuid parameter can not be  nuul");
 		 }
-		 this.executor.shutdownNow();
-		 return  true;
+		 boolean found=false;
+		 for(RandomNumberEntity rne: tasks) {
+			 if(uuid.equals(rne.getRequestID())) {
+				 found = true;
+				 break;
+			 }
+		 }
+		 if(found) {
+			 this.executor.shutdownNow();
+			 return  true;
+		 }
+		 return found;
+		 
 	}
 
 
 	@Override
 	public EstatisticEntity getStats() {
  		if(tasks.size()==1) {
- 			return new EstatisticEntity(tasks.get(0).getTimeSecs(), tasks.get(0).getTimeSecs(), 1);
+ 			for(RandomNumberEntity rne: tasks) {
+ 				return new EstatisticEntity(rne.getTimeSecs(), rne.getTimeSecs(), 1);	
+ 			}
+ 			
+ 			
  		}
 		Stream<RandomNumberEntity> minStream= tasks.stream();
 		Optional<Long> min = minStream
@@ -116,9 +132,9 @@ public class RandomServiceImpl implements RandomService {
 
 
 	@Override
-	public List<PendingEntity> getPendingRequest() {
+	public Set<PendingEntity> getPendingRequest() {
 		
-		List<PendingEntity> pendings = new  ArrayList<>();
+		Set<PendingEntity> pendings = new  HashSet<>();
 		LocalTime  time = LocalTime.now();
 		tasks.stream().filter(x->!x.isGenerated()).forEach(x->{
 			PendingEntity pending = new PendingEntity(
@@ -142,18 +158,20 @@ public class RandomServiceImpl implements RandomService {
 	}
 
 	private Callable<RandomNumberEntity> createThread(Long xMaxWait){
+		
 		Callable<RandomNumberEntity> callable = () ->{
 			RandomNumberEntity randomNumberEntity = new RandomNumberEntity();
 			
 			int  start = LocalTime.now().toSecondOfDay();
 			randomNumberEntity.setTimeCreated(LocalTime.now());
 			randomNumberEntity.setRequestID(UUID.randomUUID());
-			
-			 	if(xMaxWait == null) {
+			tasks.add(randomNumberEntity);
+			 
+			if(xMaxWait == null) {
 					Thread.sleep(30000);
-				}else {
+			}else {
 					Thread.sleep(xMaxWait);
-				}
+			}
 			 
 			
 			randomNumberEntity.setNumber(RandomNumberFactory.get());

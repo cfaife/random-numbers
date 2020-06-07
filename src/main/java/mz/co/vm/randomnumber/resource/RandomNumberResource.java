@@ -1,6 +1,6 @@
 package mz.co.vm.randomnumber.resource;
 
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
@@ -52,7 +52,7 @@ public class RandomNumberResource {
 	@GET
 	@Path("/history")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<RandomNumberEntity> getRandomNumbers() {
+	public Set<RandomNumberEntity> getRandomNumbers() {
 		return this.randomService.getHistory();
 	}
 
@@ -66,7 +66,7 @@ public class RandomNumberResource {
 		
 		Response.ResponseBuilder rp = 
 				Response
-					.ok(canceled?"request "+uuid+ "canceled ":"request "+uuid+ "not canceled ");
+					.ok(canceled?"request "+uuid+ " is canceled ":"request "+uuid+ " is not canceled, may not exists");
 		Response response = rp.build();
 		
 		return response;
@@ -82,7 +82,7 @@ public class RandomNumberResource {
 	@GET
 	@Path("/pending")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<PendingEntity> getPendingRequests() {
+	public Set<PendingEntity> getPendingRequests() {
 		return this.randomService.getPendingRequest();
 	}
 

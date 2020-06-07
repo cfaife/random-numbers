@@ -1,10 +1,6 @@
 package mz.co.vm.randomnumber.service;
-/**
- * 
- * @author Clerio Alfredo Faife
- *
- */
-import java.util.List;
+
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -17,7 +13,7 @@ import mz.co.vm.randomnumber.entity.PendingEntity;
 import mz.co.vm.randomnumber.entity.RandomNumberEntity;
 /**
  * 
- * @author cfaife
+ * @author Clerio Alfredo Faife
  *
  */
 @Remote
@@ -25,13 +21,13 @@ public interface RandomService {
 	
 	RandomNumberEntity generateNewRandomNumber(Long xMaxWait) throws InterruptedException, ExecutionException, TimeoutException;
 	
-	List<RandomNumberEntity> getHistory();
+	Set<RandomNumberEntity> getHistory();
 	
 	boolean cancelRandomRequest(UUID uuid);
 	
 	EstatisticEntity getStats();
 	
-	List<PendingEntity> getPendingRequest();
+	Set<PendingEntity> getPendingRequest();
 	
 	void changePoolThreadSize(int size);
 	

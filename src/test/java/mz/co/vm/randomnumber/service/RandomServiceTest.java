@@ -2,7 +2,7 @@ package mz.co.vm.randomnumber.service;
 
 import static org.junit.Assert.*;
 
-import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import java.util.concurrent.TimeoutException;
@@ -63,7 +63,7 @@ public class RandomServiceTest {
 		randomService.generateNewRandomNumber(2000L);
 		randomService.generateNewRandomNumber(2000L);
 		
-		List<RandomNumberEntity> randomNumbers = randomService.getHistory();
+		Set<RandomNumberEntity> randomNumbers = randomService.getHistory();
 		
 		assertFalse(randomNumbers.isEmpty());
 		assertEquals(3, randomNumbers.size());
