@@ -75,8 +75,11 @@ public class RandomNumberResource {
 	@GET
 	@Path("/stats")
 	@Produces(MediaType.APPLICATION_JSON)
-	public EstatisticEntity getStats() {
-		return this.randomService.getStats();
+	public Response getStats() {
+		
+		EstatisticEntity stat = this.randomService.getStats();
+		
+		return Response.ok(stat).build();
 	}
 
 	@GET
